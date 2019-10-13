@@ -1,15 +1,13 @@
+
 class FamilyTree {
-  constructor (val) {
-    if (!val || (typeof val != 'string')) {
-      throw ('value required');
-    }
-    this.value = val;
+  constructor (name, age) {
+    this.name = name;
+    this.age = age;
     this.children = [];
   }
 
-  insert(val) {
-    let child = new FamilyTree(val);
-    this.children.push(child);
+  insert(name, age) {
+    this.children.push(new FamilyTree(name, age));
   }
 
   familySize() {
@@ -17,16 +15,18 @@ class FamilyTree {
   }
 
   findMember(member) {
-    if (this.value === member) {
+    if (this.name === member) {
       return this;
     }
-    return this.children.filter(child => child.value === member)[0];
+    return this.children.reduce((found, child) => {
+      return found || child.findMember(member);
+    }, undefined);
   }
 
   log() {
 
     const logHelper = (tree, prefix) => {
-        let subString = prefix + ' ' + tree.value + '\n';
+        let subString = prefix + ' ' + tree.name + '\n';
         tree.children.forEach(child => {
           subString += logHelper(child, prefix + `--`);
         })
@@ -39,4 +39,3 @@ class FamilyTree {
 
 }
 
-module.exports = FamilyTree;
