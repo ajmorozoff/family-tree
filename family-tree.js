@@ -1,4 +1,3 @@
-
 class FamilyTree {
   constructor (name, age) {
     this.name = name;

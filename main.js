@@ -4,8 +4,10 @@ const nameField = document.querySelector('input[name="name"]');
 const ageField = document.querySelector('input[name="age"]');
 const submit = document.querySelector('button');
 
-//global
+//root content Div
 const content = document.querySelector('#content');
+
+//global
 let root = '';
 let selectedNode = '';
 let selectedDiv = '';
@@ -20,32 +22,37 @@ const makeLeafDiv = (tree, gen) => {
         if (ev.target.classList.contains('member')) {
             ev.target.classList.toggle('selected');
             selectedDiv.classList.toggle('selected');
+
             selectedDiv = ev.target;
-            console.log(selectedDiv);
             selectedNode = root.findMember(ev.target.dataset.name);
-            console.log(selectedNode);
         }
     });
 
-    let trName = document.createElement('h3');
+    let trName = document.createElement('h4');
     trName.innerHTML = tree.name;
     let trAge = document.createElement('p');
     trAge.innerHTML = tree.age;
 
     trDIV.appendChild(trName);
     trDIV.appendChild(trAge);
+
     return trDIV;
+}
+
+const makeGenDiv = (gen) => {
+    let newGenDiv = document.createElement('div');
+    let header = document.createElement('h3');
+    header.innerHTML = `Generation ${gen}`;
+    newGenDiv.appendChild(header);
+    newGenDiv.classList.add('generation');
+    newGenDiv.id = `#gen-${gen}`;
+    return newGenDiv;
 }
 
 const findGenDiv = (gen) => {
     let container = document.getElementById(`#gen-${gen}`);
     if (container === null) {
-        container = document.createElement('div');
-        let header = document.createElement('h3');
-        header.innerHTML = `Generation ${gen}`;
-        container.appendChild(header);
-        container.classList.add('generation');
-        container.id = `#gen-${gen}`;
+        container = makeGenDiv(gen);
         content.appendChild(container);
     }
     return container;
@@ -76,9 +83,14 @@ submit.addEventListener('click', ev => {
     }
     else {
         selectedNode.insert(nameInput, ageInput);
+
+        //We have different options for retrieving the generation of the parent and passing it to the child
+        //I chose to store the generation on each leaf div's dataset
+        //under the belief it is more performant than running another query on the document
         let newTreegen = parseInt(selectedDiv.dataset.generation, 10) + 1;
         updatePage(newTree, findGenDiv(newTreegen), newTreegen);
     }
-
+    nameField.value = '';
+    ageField.value = '';
 
 })
